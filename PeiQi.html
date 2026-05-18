@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
+  <title>🐷 小猪佩奇挑战 · 520</title>
+  <style>
+    :root {
+      --pink: #ff6b9d;
+      --pink-light: #ffa4c4;
+      --pink-dark: #d9446e;
+      --bg-deep: #0a0d2e;
+      --glass-bg: rgba(20, 22, 60, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --text: #f0e6f6;
+      --toast-bg: rgba(255, 140, 170, 0.9);
+      --crystal-pink: #ff7eb3;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'WenQuanYi Micro Hei', sans-serif;
+      background: var(--bg-deep);
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+
+    /* 星空画布 */
+    #starsCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* 烟花画布 */
+    #fireworkCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* 柔光光晕 */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(255,120,160,0.7) 0%, transparent 70%);
+      top: -80px;
+      left: -60px;
+    }
+    .orb-2 {
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(140,160,255,0.6) 0%, transparent 70%);
+      bottom: -70px;
+      right: -50px;
+      animation-delay: 4s;
+    }
+    .orb-3 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,200,150,0.5) 0%, transparent 70%);
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 2s;
+      animation-duration: 12s;
+    }
+    @keyframes orbFloat {
+      0%,100% { transform: translate(0,0) scale(1); }
+      25% { transform: translate(30px,-25px) scale(1.15); }
+      50% { transform: translate(-15px,20px) scale(0.9); }
+      75% { transform: translate(-25px,-30px) scale(1.1); }
+    }
+
+    /* 主容器 */
+    .main-container {
+      position: relative;
+      z-index: 5;
+      width: 92vw;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 8px;
+    }
+
+    /* 顶部大爱心 */
+    .top-heart-wrapper {
+      position: relative;
+      z-index: 6;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 0 18px rgba(255,100,140,0.5));
+    }
+    .top-heart-wrapper.big-bright {
+      transform: scale(1.55);
+      filter: drop-shadow(0 0 50px rgba(255,80,130,1)) drop-shadow(0 0 100px rgba(255,150,180,0.8));
+      animation: heartPulse 0.7s ease-in-out 3;
+    }
+    @keyframes heartPulse {
+      0%,100% { transform: scale(1.55); }
+      30% { transform: scale(1.75); }
+      60% { transform: scale(1.45); }
+    }
+    .top-heart-svg {
+      width: 60px;
+      height: 55px;
+      display: block;
+      transition: all 0.6s ease;
+    }
+    .top-heart-wrapper.big-bright .top-heart-svg {
+      width: 75px;
+      height: 68px;
+    }
+
+    /* 毛玻璃卡片 */
+    .glass-card {
+      width: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 28px 22px 24px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06) inset;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(255,180,200,0.08) 0%, transparent 55%),
+                  radial-gradient(ellipse at 70% 80%, rgba(180,200,255,0.06) 0%, transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glass-card > * { position: relative; z-index: 1; }
+
+    .card-title {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffb8d0;
+      margin-bottom: 6px;
+      text-shadow: 0 0 20px rgba(255,150,180,0.6);
+    }
+    .card-subtitle {
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(255,210,230,0.7);
+      margin-bottom: 16px;
+    }
+
+    .question-area { text-align: center; min-height: 50px; }
+    .question-number {
+      display: inline-block;
+      background: var(--pink);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .question-text { font-size: 1.1rem; color: #f5e6f0; font-weight: 500; }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .answer-input {
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 18px;
+      border-radius: 50px;
+      border: 2px solid rgba(255,180,200,0.4);
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+    .answer-input:focus {
+      border-color: var(--pink-light);
+      box-shadow: 0 0 25px rgba(255,120,160,0.35);
+    }
+    .answer-input.shake {
+      animation: inputShake 0.55s ease-in-out;
+      border-color: #ff6b6b !important;
+    }
+    @keyframes inputShake {
+      0%,100%{transform:translateX(0);}
+      10%{transform:translateX(-8px);}
+      20%{transform:translateX(8px);}
+      30%{transform:translateX(-7px);}
+      40%{transform:translateX(6px);}
+      50%{transform:translateX(-5px);}
+      60%{transform:translateX(4px);}
+      70%{transform:translateX(-3px);}
+      80%{transform:translateX(2px);}
+      90%{transform:translateX(-1px);}
+    }
+
+    .btn {
+      padding: 13px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+    .btn-confirm {
+      background: linear-gradient(135deg, #ff7eb3, #ff5e8a);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(255,100,140,0.45);
+      min-width: 130px;
+    }
+    .btn-next {
+      background: linear-gradient(135deg, #ffb347, #ff8c42);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(255,160,60,0.45);
+      animation: btnPopIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes btnPopIn {
+      0%{transform:scale(0);opacity:0;}
+      70%{transform:scale(1.08);}
+      100%{transform:scale(1);opacity:1;}
+    }
+    .btn-loveletter {
+      background: linear-gradient(135deg, #ff5e8a, #d9446e);
+      color: #fff;
+      box-shadow: 0 8px 30px rgba(255,70,110,0.55);
+      font-size: 1.1rem;
+      padding: 15px 38px;
+      animation: btnGlow 2s ease-in-out infinite;
+    }
+    @keyframes btnGlow {
+      0%,100%{box-shadow:0 8px 30px rgba(255,70,110,0.55);}
+      50%{box-shadow:0 8px 50px rgba(255,70,110,0.9);}
+    }
+
+    .hint-display {
+      text-align: center;
+      color: #ffe0b0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      background: rgba(255,200,140,0.1);
+      border-radius: 16px;
+      border: 1px dashed rgba(255,200,150,0.35);
+      margin-top: 6px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-120px);
+      background: var(--toast-bg);
+      color: #fff;
+      padding: 13px 26px;
+      border-radius: 50px;
+      font-weight: 600;
+      z-index: 100;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 8px 30px rgba(255,120,150,0.5);
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .progress-wrapper {
+      width: 100%;
+      max-width: 320px;
+      margin: 10px auto;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-wrapper.active { display: flex; }
+    .progress-bar-outer {
+      width: 100%;
+      height: 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      width: 0%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #ff7eb3, #ffb347, #ff5e8a);
+      transition: width 0.08s linear;
+    }
+
+    .loveletter-section {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 16px;
+      animation: fadeInUp 0.6s;
+    }
+    .loveletter-section.active { display: flex; }
+    @keyframes fadeInUp {
+      0%{opacity:0;transform:translateY(15px);}
+      100%{opacity:1;transform:translateY(0);}
+    }
+    .crystal-heart-container {
+      width: 120px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: crystalAppear 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes crystalAppear {
+      0%{transform:scale(0) rotate(-30deg);opacity:0;}
+      60%{transform:scale(1.15) rotate(3deg);opacity:1;}
+      100%{transform:scale(1) rotate(0);opacity:1;}
+    }
+    .crystal-heart-svg {
+      width: 120px;
+      height: 110px;
+      filter: drop-shadow(0 0 25px rgba(255,100,150,0.7));
+      animation: crystalShimmer 3s infinite;
+    }
+    @keyframes crystalShimmer {
+      0%,100%{filter:drop-shadow(0 0 25px rgba(255,100,150,0.7));}
+      50%{filter:drop-shadow(0 0 40px rgba(255,130,170,1));}
+    }
+    .loveletter-text {
+      text-align: center;
+      color: #f8e8f0;
+      font-size: 0.95rem;
+      line-height: 2;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .hidden { display: none !important; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
+
+    @media (max-width: 420px) {
+      .glass-card { padding: 20px 14px; }
+      .top-heart-svg { width: 46px; height: 42px; }
+      .crystal-heart-svg { width: 90px; height: 82px; }
+    }
+  </style>
+</head>
+<body>
+<div class="glow-orb orb-1"></div>
+<div class="glow-orb orb-2"></div>
+<div class="glow-orb orb-3"></div>
+<canvas id="starsCanvas"></canvas>
+<canvas id="fireworkCanvas"></canvas>
+<div class="toast" id="toast">🐷 不对哦，再想想～</div>
+
+<div class="main-container" id="mainContainer">
+  <div class="top-heart-wrapper" id="topHeart">
+    <svg class="top-heart-svg" viewBox="0 0 100 92">
+      <defs>
+        <radialGradient id="heartGradTop" cx="40%" cy="30%" r="55%">
+          <stop offset="0%" stop-color="#ff9ec4"/>
+          <stop offset="60%" stop-color="#ff5e8a"/>
+          <stop offset="100%" stop-color="#d93d60"/>
+        </radialGradient>
+      </defs>
+      <path d="M50,85 C25,65 0,45 0,25 C0,10 12,0 25,0 C33,0 41,5 50,15 C59,5 67,0 75,0 C88,0 100,10 100,25 C100,45 75,65 50,85Z" fill="url(#heartGradTop)" filter="url(#heartGlowTop)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="glass-card" id="glassCard">
+    <div class="card-title">🐷 小猪佩奇挑战 💕</div>
+    <div class="card-subtitle">✨ 520 专属心动问答 ✨</div>
+    <div class="question-area" id="questionArea">
+      <span class="question-number" id="questionNumber">第 1/3 题</span>
+      <p class="question-text" id="questionText"></p>
+    </div>
+    <div class="input-group" id="inputGroup">
+      <input type="text" class="answer-input" id="answerInput" placeholder="输入你的答案..." autocomplete="off">
+      <button class="btn btn-confirm" id="btnConfirm">💝 确认答案</button>
+    </div>
+    <div class="hint-display hidden" id="hintDisplay"></div>
+    <div class="btn-row hidden" id="nextBtnRow">
+      <button class="btn btn-next" id="btnNext">👉 下一题</button>
+    </div>
+    <div class="progress-wrapper" id="progressWrapper">
+      <span style="color:#ffd6a5;">🌟 正在编织爱的进度...</span>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBarInner"></div></div>
+    </div>
+    <div class="btn-row hidden" id="loveLetterBtnRow">
+      <button class="btn btn-loveletter" id="btnLoveLetter">💌 生成情书</button>
+    </div>
+    <div class="loveletter-section" id="loveLetterSection">
+      <div class="crystal-heart-container" id="crystalHeartContainer">
+        <svg class="crystal-heart-svg" viewBox="0 0 120 110">
+          <defs>
+            <linearGradient id="crystalBase" x1="20%" y1="0%" x2="80%" y2="100%">
+              <stop offset="0%" stop-color="#ffc2d9"/>
+              <stop offset="30%" stop-color="#ff7eb3"/>
+              <stop offset="65%" stop-color="#e8557c"/>
+              <stop offset="100%" stop-color="#c43d5e"/>
+            </linearGradient>
+          </defs>
+          <path d="M60,100 C30,76 5,52 5,28 C5,12 18,2 32,2 C42,2 52,9 60,20 C68,9 78,2 88,2 C102,2 115,12 115,28 C115,52 90,76 60,100Z" fill="url(#crystalBase)" filter="url(#crystalGlow)" stroke="rgba(255,255,255,0.35)" stroke-width="1.8"/>
+        </svg>
+      </div>
+      <div class="loveletter-text" id="loveLetterText"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // 画布
+    const starsCanvas = document.getElementById('starsCanvas');
+    const starsCtx = starsCanvas.getContext('2d');
+    const fireworkCanvas = document.getElementById('fireworkCanvas');
+    const fireworkCtx = fireworkCanvas.getContext('2d');
+    
+    // DOM
+    const topHeart = document.getElementById('topHeart');
+    const questionNumber = document.getElementById('questionNumber');
+    const questionText = document.getElementById('questionText');
+    const answerInput = document.getElementById('answerInput');
+    const btnConfirm = document.getElementById('btnConfirm');
+    const hintDisplay = document.getElementById('hintDisplay');
+    const nextBtnRow = document.getElementById('nextBtnRow');
+    const btnNext = document.getElementById('btnNext');
+    const inputGroup = document.getElementById('inputGroup');
+    const progressWrapper = document.getElementById('progressWrapper');
+    const progressBarInner = document.getElementById('progressBarInner');
+    const loveLetterBtnRow = document.getElementById('loveLetterBtnRow');
+    const btnLoveLetter = document.getElementById('btnLoveLetter');
+    const loveLetterSection = document.getElementById('loveLetterSection');
+    const loveLetterText = document.getElementById('loveLetterText');
+    const crystalHeartContainer = document.getElementById('crystalHeartContainer');
+    const toast = document.getElementById('toast');
+
+    // 题目数据
+    const questions = [
+      { 
+        q: '我们第一次约会是在哪一天？', 
+        a: '2026.1.1', 
+        hint: '牵你手的时候，你心跳快了一拍，是心动的感觉~<br>共鸣是跨越时间和空间的信号，<br>也是我想你的时候你正好也想我。💗' 
+      },
+      { 
+        q: '去四姑娘山上，见到最独特的动物是什么？', 
+        a: '牦牛', 
+        hint: '你比四姑娘山牦牛还倔多了，当然我知道你内心的温柔和善良。<br>每场争执和好之后，我们又互相拥抱，<br>希望我们都能收掉互相攻击的武器一起抵抗世界...🌍' 
+      },
+      { 
+        q: '在我印象中你最喜爱的花是什么？', 
+        a: '玫瑰', 
+        hint: '缘份让我们相遇，爱上上天自有天意，<br>爱下去是久处不厌，<br>希望我们都能成长成自己想要的样子，<br>互相照亮，一路前行。🌟' 
+      }
+    ];
+
+    const lovePoem = `To Dear 佩奇 :
+    你像清风，
+    穿过初夏梧桐叶，
+    把我的慌乱悄悄吹散。
+
+    你似明月，
+    照亮我心里藏了的暗影，
+    夜深人静的时候共诉衷肠。
+
+    相遇之前，我们各自在荒原行走，
+    错过千万次回眸的机缘，
+    才换来此并肩。
+
+    我要用白昼的晨光护你，
+    用夜晚的月亮伴你，
+    用所有不曾相遇的遗憾，
+    垒成一座不会动摇的岛。
+
+    我的手指穿过你的发间，
+    像潮水认领沙滩，
+    就算九十九条江河倒流，
+    我依然，在你身后。
+
+    --爱你的Lei`;
+
+    let currentIndex = 0;
+    let waitingNext = false;
+    let allDone = false;
+
+    // 星空初始化
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      [starsCanvas, fireworkCanvas].forEach(c => {
+        c.width = window.innerWidth * dpr;
+        c.height = window.innerHeight * dpr;
+        c.style.width = window.innerWidth + 'px';
+        c.style.height = window.innerHeight + 'px';
+        c.getContext('2d').setTransform(1,0,0,1,0,0);
+        c.getContext('2d').scale(dpr, dpr);
+      });
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const stars = [];
+    const heartStars = [];
+    for(let i=0; i<130; i++) stars.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, r: Math.random()*2+0.5, alpha: Math.random(), speed: 0.005+Math.random()*0.02 });
+    for(let i=0; i<16; i++) heartStars.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, size: 5+Math.random()*6, alpha: Math.random(), rot: Math.random()*Math.PI*2 });
+
+    function drawStars() {
+      starsCtx.clearRect(0,0,innerWidth,innerHeight);
+      stars.forEach(s => {
+        s.alpha += (Math.random()-0.5)*0.02;
+        s.alpha = Math.max(0.3, Math.min(1, s.alpha));
+        starsCtx.beginPath();
+        starsCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        starsCtx.fillStyle = `rgba(255,220,240,${s.alpha})`;
+        starsCtx.fill();
+      });
+      heartStars.forEach(h => {
+        h.alpha += (Math.random()-0.5)*0.03;
+        h.alpha = Math.max(0.2, Math.min(0.9, h.alpha));
+        starsCtx.save();
+        starsCtx.translate(h.x, h.y);
+        starsCtx.rotate(h.rot);
+        starsCtx.beginPath();
+        const s = h.size;
+        starsCtx.moveTo(0, -s*0.35);
+        starsCtx.bezierCurveTo(s*0.45, -s*0.9, s*1.05, -s*0.25, 0, s*0.65);
+        starsCtx.bezierCurveTo(-s*1.05, -s*0.25, -s*0.45, -s*0.9, 0, -s*0.35);
+        starsCtx.fillStyle = `rgba(255,140,180,${h.alpha})`;
+        starsCtx.fill();
+        starsCtx.restore();
+      });
+    }
+
+    // 烟花系统
+    const fireworks = [];
+    function spawnFirework(x, y) {
+      const colors = ['#ff7eb3','#ffb347','#ffd166','#ff5e8a','#ff9f4b'];
+      for(let i=0; i<45; i++) {
+        const angle = Math.random()*Math.PI*2;
+        const speed = 2+Math.random()*5;
+        fireworks.push({
+          x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+          life: 40+Math.random()*30, color: colors[Math.floor(Math.random()*colors.length)],
+          size: 1.5+Math.random()*2.5
+        });
+      }
+    }
+    function grandFinale() {
+      const w = innerWidth, h = innerHeight;
+      [0.2,0.5,0.8].forEach((fx,i) => setTimeout(()=>spawnFirework(w*fx, h*0.3), i*200));
+      setTimeout(()=>spawnFirework(w*0.5, h*0.5), 600);
+    }
+
+    function animate() {
+      drawStars();
+      fireworkCtx.clearRect(0,0,innerWidth,innerHeight);
+      for(let i=fireworks.length-1; i>=0; i--) {
+        const p = fireworks[i];
+        p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.life--;
+        fireworkCtx.beginPath();
+        fireworkCtx.arc(p.x, p.y, p.size*(p.life/70), 0, Math.PI*2);
+        fireworkCtx.fillStyle = p.color.replace(')', `,${p.life/70})`).replace('rgb','rgba');
+        fireworkCtx.fill();
+        if(p.life<=0) fireworks.splice(i,1);
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // 辅助函数
+    function showToast(msg) {
+      toast.textContent = '🐷 ' + msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    function shakeInput() {
+      answerInput.classList.add('shake');
+      setTimeout(() => answerInput.classList.remove('shake'), 600);
+    }
+    function bigHeart() {
+      topHeart.classList.add('big-bright');
+      setTimeout(() => topHeart.classList.remove('big-bright'), 2100);
+    }
+
+    function checkAnswer(input, q) {
+      const clean = input.trim().toLowerCase();
+      if(!clean) return false;
+      if(q.a === '2026.1.1') return /2026.*1.*1/.test(clean) || clean.includes('2026.1.1');
+      if(q.a === '牦牛') return clean.includes('牦') || clean.includes('牛');
+      if(q.a === '玫瑰') return clean.includes('玫') || clean.includes('瑰');
+      return clean.includes(q.a);
+    }
+
+    function renderQuestion(idx) {
+      const q = questions[idx];
+      questionNumber.textContent = `第 ${idx+1}/3 题`;
+      questionText.textContent = q.q;
+      answerInput.value = '';
+      answerInput.disabled = false;
+      btnConfirm.disabled = false;
+      inputGroup.classList.remove('hidden');
+      hintDisplay.classList.add('hidden');
+      nextBtnRow.classList.add('hidden');
+      waitingNext = false;
+    }
+
+    btnConfirm.addEventListener('click', () => {
+      if(waitingNext || allDone) return;
+      if(checkAnswer(answerInput.value, questions[currentIndex])) {
+        waitingNext = true;
+        answerInput.disabled = true;
+        btnConfirm.disabled = true;
+        bigHeart();
+        spawnFirework(innerWidth/2, innerHeight*0.35);
+        hintDisplay.innerHTML = questions[currentIndex].hint;
+        hintDisplay.classList.remove('hidden');
+        setTimeout(() => {
+          if(currentIndex < 2) {
+            nextBtnRow.classList.remove('hidden');
+          } else {
+            allDone = true;
+            hintDisplay.classList.add('hidden');
+            inputGroup.classList.add('hidden');
+            progressWrapper.classList.add('active');
+            let progress = 0;
+            const interval = setInterval(() => {
+              progress += 2;
+              progressBarInner.style.width = progress + '%';
+              if(progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                  progressWrapper.classList.remove('active');
+                  grandFinale();
+                  loveLetterBtnRow.classList.remove('hidden');
+                }, 300);
+              }
+            }, 40);
+          }
+        }, 5000);
+      } else {
+        shakeInput();
+        showToast('不对哦，再想想～');
+        answerInput.value = '';
+        answerInput.focus();
+      }
+    });
+
+    btnNext.addEventListener('click', () => {
+      if(!waitingNext) return;
+      currentIndex++;
+      if(currentIndex < 3) renderQuestion(currentIndex);
+    });
+
+    answerInput.addEventListener('keydown', e => {
+      if(e.key === 'Enter' && !waitingNext && !allDone) btnConfirm.click();
+    });
+
+    btnLoveLetter.addEventListener('click', () => {
+      loveLetterBtnRow.classList.add('hidden');
+      loveLetterSection.classList.add('active');
+      crystalHeartContainer.style.animation = 'none';
+      crystalHeartContainer.offsetHeight;
+      crystalHeartContainer.style.animation = 'crystalAppear 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards';
+      grandFinale();
+      let i = 0;
+      loveLetterText.innerHTML = '';
+      const chars = [...lovePoem];
+      function type() {
+        if(i < chars.length) {
+          loveLetterText.innerHTML += chars[i];
+          i++;
+          loveLetterText.scrollTop = loveLetterText.scrollHeight;
+          setTimeout(type, 45);
+        }
+      }
+      type();
+    });
+
+    renderQuestion(0);
+  })();
+</script>
+</body>
+</html>
