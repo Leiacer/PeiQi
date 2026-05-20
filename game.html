@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💘 520心动盲盒挑战</title>
+    <style>
+        :root {
+            --pink-soft: #fff0f5;
+            --pink-light: #ffd6e0;
+            --pink: #ff7b9c;
+            --pink-deep: #e8577a;
+            --rose: #ff5e7a;
+            --gold: #f4a460;
+            --gold-light: #ffe0b2;
+            --white: #ffffff;
+            --text: #4a3040;
+            --text-light: #6b5568;
+            --shadow: 0 8px 32px rgba(255, 120, 150, 0.18);
+            --shadow-lg: 0 16px 48px rgba(255, 100, 140, 0.25);
+            --card-a: #fff5f7;
+            --card-b: #fff0f8;
+            --accent-a: #ff6b8a;
+            --accent-b: #e879a0;
+            --radius: 24px;
+            --radius-sm: 14px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background: linear-gradient(160deg, #fce4ec 0%, #fef0f5 20%, #fff5f8 45%, #fce4f0 70%, #fef5f8 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
+        }
+
+        /* ============ 飘落心形背景 ============ */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .heart-particle {
+            position: absolute;
+            top: -60px;
+            animation: fall linear infinite;
+            opacity: 0.55;
+            pointer-events: none;
+            will-change: transform;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-60px) rotate(0deg) scale(1);
+                opacity: 0.7;
+            }
+            15% {
+                opacity: 0.55;
+            }
+            70% {
+                opacity: 0.35;
+            }
+            100% {
+                transform: translateY(105vh) rotate(720deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+        @keyframes sway {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(18px);
+            }
+            50% {
+                transform: translateX(-14px);
+            }
+            75% {
+                transform: translateX(20px);
+            }
+        }
+
+        /* ============ 主容器 ============ */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        /* ============ 头部 ============ */
+        .header {
+            text-align: center;
+            padding: 20px 10px 10px;
+        }
+        .header .icon-row {
+            font-size: 42px;
+            animation: bounce-icon 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        @keyframes bounce-icon {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-16px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            70% {
+                transform: translateY(-8px);
+            }
+            85% {
+                transform: translateY(0);
+            }
+        }
+        .header h1 {
+            font-size: clamp(28px, 6vw, 40px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff5e7a, #e8577a, #d44a6e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 6px 0;
+            letter-spacing: 2px;
+        }
+        .header .subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        .header .date-badge {
+            display: inline-block;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--rose);
+            margin-top: 8px;
+            box-shadow: 0 2px 12px rgba(255, 100, 140, 0.15);
+            letter-spacing: 0.5px;
+        }
+
+        /* ============ 玩家区域 ============ */
+        .players-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 24px 0 10px;
+            flex-wrap: wrap;
+        }
+        .player-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 18px 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            min-width: 130px;
+            flex: 1;
+            max-width: 200px;
+            position: relative;
+            border: 3px solid transparent;
+            cursor: default;
+        }
+        .player-card.active-player {
+            border-color: var(--rose);
+            box-shadow: var(--shadow-lg), 0 0 0 8px rgba(255, 100, 140, 0.08);
+            transform: translateY(-4px);
+            animation: glow-pulse 2.2s ease-in-out infinite;
+        }
+        @keyframes glow-pulse {
+            0%,
+            100% {
+                box-shadow: var(--shadow-lg), 0 0 0 8px rgba(255, 100, 140, 0.08);
+            }
+            50% {
+                box-shadow: var(--shadow-lg), 0 0 0 18px rgba(255, 100, 140, 0.02);
+            }
+        }
+        .player-card .player-avatar {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 4px;
+            transition: var(--transition);
+        }
+        .player-card .player-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin: 4px 0;
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+        .player-card .score-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin: 6px 0;
+            flex-wrap: wrap;
+        }
+        .score-heart {
+            font-size: 18px;
+            transition: var(--transition);
+            display: inline-block;
+        }
+        .score-heart.filled {
+            animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop-in {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.4);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .free-pass-badge {
+            display: inline-block;
+            font-size: 11px;
+            background: var(--gold-light);
+            color: #b87333;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+            transition: var(--transition);
+        }
+        .free-pass-badge.used {
+            background: #f0f0f0;
+            color: #bbb;
+            text-decoration: line-through;
+        }
+        .player-card .first-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--rose);
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(255, 100, 140, 0.3);
+            animation: btn-bounce 2.5s ease-in-out infinite;
+        }
+        @keyframes btn-bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-6px);
+            }
+            60% {
+                transform: translateY(0);
+            }
+            80% {
+                transform: translateY(-3px);
+            }
+        }
+        .player-card .first-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(255, 100, 140, 0.4);
+        }
+        .player-card .first-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ============ 抽取按钮区域 ============ */
+        .draw-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .draw-btn-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .draw-btn {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ff6b8a, #e8577a);
+            border: none;
+            cursor: pointer;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 28px rgba(255, 100, 140, 0.4), inset 0 -3px 6px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            14% {
+                transform: scale(1.12);
+            }
+            28% {
+                transform: scale(1);
+            }
+            42% {
+                transform: scale(1.1);
+            }
+            56% {
+                transform: scale(1);
+            }
+        }
+        .draw-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 36px rgba(255, 100, 140, 0.55), inset 0 -3px 6px rgba(0, 0, 0, 0.08);
+        }
+        .draw-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 4px 16px rgba(255, 100, 140, 0.3);
+            animation: none;
+        }
+        .draw-btn.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            animation: none;
+            filter: grayscale(30%);
+        }
+        .draw-btn .spark-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            animation: ripple-out 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes ripple-out {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 1;
+            }
+            100% {
+                width: 160px;
+                height: 160px;
+                opacity: 0;
+                margin-top: -70px;
+                margin-left: -70px;
+            }
+        }
+        .current-indicator {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--rose);
+            letter-spacing: 0.5px;
+            background: var(--white);
+            padding: 5px 14px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(255, 100, 140, 0.12);
+            white-space: nowrap;
+        }
+        .remaining-badge {
+            font-size: 12px;
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        /* ============ 历史记录 ============ */
+        .history-section {
+            margin-top: 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            box-shadow: var(--shadow);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .history-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--text);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .history-list {
+            list-style: none;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: #ffd6e0;
+            border-radius: 10px;
+        }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 6px;
+            font-size: 13px;
+            transition: var(--transition);
+            background: #fefafc;
+            border-left: 4px solid #ffd6e0;
+            animation: slide-in 0.35s ease-out;
+        }
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .history-item.done {
+            border-left-color: #4caf84;
+            background: #f6fdf9;
+        }
+        .history-item.failed {
+            border-left-color: #ffb3b3;
+            background: #fff8f8;
+        }
+        .history-item .task-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .history-item .task-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .history-item .task-info .task-name {
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .history-item .task-info .task-player {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-item .result-badge {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* ============ 底部 ============ */
+        .love-quotes {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 13px;
+            color: var(--text-light);
+            font-style: italic;
+            opacity: 0.8;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 10px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .love-quotes:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.75);
+            transform: translateY(-2px);
+        }
+        .love-quotes .quote-emoji {
+            font-size: 16px;
+        }
+        .reset-btn {
+            display: block;
+            margin: 14px auto;
+            padding: 10px 24px;
+            border-radius: 22px;
+            border: 2px solid #ffd6e0;
+            background: var(--white);
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+        }
+        .reset-btn:hover {
+            background: #fff5f7;
+            border-color: #ffb3c6;
+            color: var(--rose);
+        }
+
+        /* ============ 任务弹窗 ============ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fade-in 0.25s ease-out;
+            padding: 20px;
+        }
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 28px 22px 22px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            animation: pop-up 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            border: 2px solid #ffe0e8;
+        }
+        @keyframes pop-up {
+            0% {
+                transform: scale(0.7) translateY(40px);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-card .task-number {
+            font-size: 13px;
+            color: var(--rose);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+        .modal-card .task-emoji {
+            font-size: 56px;
+            display: block;
+            margin: 8px 0;
+            animation: bounce-icon 0.7s ease-out;
+        }
+        .modal-card .task-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin: 6px 0;
+            letter-spacing: 0.5px;
+        }
+        .modal-card .task-desc {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin: 10px 0 18px;
+            padding: 12px 16px;
+            background: #fefafc;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.3px;
+        }
+        .modal-card .modal-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 20px;
+            border-radius: 26px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 80px;
+        }
+        .btn-done {
+            background: #4caf84;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(76, 175, 132, 0.35);
+        }
+        .btn-done:hover {
+            background: #43a074;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 132, 0.45);
+        }
+        .btn-fail {
+            background: #ff7675;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(255, 118, 117, 0.3);
+        }
+        .btn-fail:hover {
+            background: #e86564;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 118, 117, 0.4);
+        }
+        .btn-pass {
+            background: #fff;
+            color: #b87333;
+            border: 2px solid #f4a460;
+            box-shadow: 0 4px 14px rgba(244, 164, 96, 0.2);
+            font-size: 12px;
+            flex: 0.7;
+            min-width: 60px;
+        }
+        .btn-pass:hover {
+            background: #fffdf5;
+            transform: translateY(-2px);
+        }
+        .btn-pass:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            border-color: #ddd;
+            color: #bbb;
+        }
+        .btn:active {
+            transform: scale(0.94);
+        }
+
+        /* ============ 胜利动画 ============ */
+        .victory-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fade-in 0.3s ease-out;
+        }
+        .victory-text {
+            font-size: clamp(32px, 7vw, 56px);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(255, 80, 120, 0.7), 0 0 60px rgba(255, 100, 140, 0.5);
+            animation: victory-bounce 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 3px;
+            background: rgba(255, 100, 140, 0.85);
+            padding: 16px 32px;
+            border-radius: 40px;
+            text-align: center;
+        }
+        @keyframes victory-bounce {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.25);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ============ 响应式 ============ */
+        @media (max-width: 520px) {
+            .players-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .player-card {
+                max-width: 100%;
+                width: 100%;
+                padding: 14px 16px;
+            }
+            .draw-area {
+                order: -1;
+                margin: 6px 0;
+            }
+            .draw-btn {
+                width: 68px;
+                height: 68px;
+                font-size: 30px;
+            }
+            .header h1 {
+                font-size: 26px;
+            }
+            .modal-card {
+                padding: 20px 14px 16px;
+            }
+            .modal-card .task-emoji {
+                font-size: 42px;
+            }
+            .modal-card .task-title {
+                font-size: 17px;
+            }
+            .btn {
+                font-size: 13px;
+                padding: 10px 14px;
+            }
+            .history-section {
+                padding: 12px 10px;
+            }
+            .history-item {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+
+        /* ============ 粒子爆发 ============ */
+        .burst-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1500;
+            font-size: 24px;
+            animation: burst-out 0.9s ease-out forwards;
+        }
+        @keyframes burst-out {
+            0% {
+                transform: translate(0, 0) scale(0.4);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(1.6);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 飘落心形背景 -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <span class="icon-row">💘</span>
+            <h1>心动盲盒挑战</h1>
+            <p class="subtitle">专属于今天的甜蜜任务清单 · 每抽一个，爱意加一分</p>
+            <span class="date-badge">📅 2026 · 5 · 20</span>
+        </header>
+
+        <!-- 玩家区域 -->
+        <div class="players-row" id="playersRow">
+            <!-- 玩家A卡片 -->
+            <div class="player-card player-a" id="playerCardA">
+                <span class="player-avatar">🌙</span>
+                <div class="player-name" id="playerNameA">先生</div>
+                <div class="score-row" id="scoreRowA">
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                </div>
+                <span class="free-pass-badge" id="freePassA">🃏 免罚卡可用</span>
+                <button class="first-btn" id="firstBtnA" onclick="claimFirst('A')">🙋 我先来！</button>
+            </div>
+
+            <!-- 抽取按钮区域 -->
+            <div class="draw-area">
+                <div class="draw-btn-wrap">
+                    <button class="draw-btn disabled" id="drawBtn" onclick="drawTask()" title="抽取任务">
+                        🎁
+                    </button>
+                </div>
+                <span class="current-indicator" id="currentIndicator">等待开始…</span>
+                <span class="remaining-badge" id="remainingBadge">剩余 20 个任务</span>
+            </div>
+
+            <!-- 玩家B卡片 -->
+            <div class="player-card player-b" id="playerCardB">
+                <span class="player-avatar">☀️</span>
+                <div class="player-name" id="playerNameB">小姐</div>
+                <div class="score-row" id="scoreRowB">
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                    <span class="score-heart">🤍</span>
+                </div>
+                <span class="free-pass-badge" id="freePassB">🃏 免罚卡可用</span>
+                <button class="first-btn" id="firstBtnB" onclick="claimFirst('B')">🙋 我先来！</button>
+            </div>
+        </div>
+
+        <!-- 已抽取任务列表 -->
+        <div class="history-section" id="historySection">
+            <h3>📋 已抽取任务</h3>
+            <ul class="history-list" id="historyList">
+                <li style="text-align:center;color:#ccc;padding:20px;font-size:13px;">
+                    ✨ 还没有抽取任务哦～<br>快来点击爱心抽取吧！
+                </li>
+            </ul>
+        </div>
+
+        <!-- 重置按钮 -->
+        <button class="reset-btn" onclick="resetGame()">🔄 重新开始</button>
+
+        <!-- 土味情话 -->
+        <div class="love-quotes" id="loveQuote" onclick="randomQuote()">
+            <span class="quote-emoji">💬</span>
+            <span id="quoteText">点击这里获取土味情话～</span>
+        </div>
+    </div>
+
+    <!-- 任务弹窗（隐藏） -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none;">
+        <div class="modal-card" id="modalCard">
+            <div class="task-number" id="modalTaskNumber"></div>
+            <span class="task-emoji" id="modalTaskEmoji"></span>
+            <div class="task-title" id="modalTaskTitle"></div>
+            <div class="task-desc" id="modalTaskDesc"></div>
+            <div class="modal-actions">
+                <button class="btn btn-done" onclick="resolveTask('done')">✅ 完成</button>
+                <button class="btn btn-pass" id="btnUsePass" onclick="resolveTask('pass')">🃏 免罚卡</button>
+                <button class="btn btn-fail" onclick="resolveTask('fail')">❌ 失败</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 胜利叠加层 -->
+    <div class="victory-overlay" id="victoryOverlay" style="display:none;">
+        <div class="victory-text" id="victoryText"></div>
+    </div>
+
+    <script>
+        (function() {
+            // ============ 任务数据 ============
+            const allTasks = [
+                { id: 1, icon: '🌟', title: '对视60秒', desc: '深情对视，不许笑，先笑的人满足对方一个小愿望。' },
+                { id: 2, icon: '🎤', title: '方言示爱', desc: '用三种不同方言说"我爱你"（可以自创方言哦～）。' },
+                { id: 3, icon: '✍️', title: '闭眼画你', desc: '给对方画简笔画头像，必须全程闭眼，最后揭晓作品！' },
+                { id: 4, icon: '😂', title: '土味情话王', desc: '念出这句话不笑场——"你知道我的缺点是什么吗？缺点你。"' },
+                { id: 5, icon: '🕰️', title: '52秒拥抱', desc: '紧紧拥抱持续52秒，可以安静、可以耳语，不许松手。' },
+                { id: 6, icon: '📸', title: '第5张合照', desc: '翻出手机相册第5张合照，分享当时的一个小故事。' },
+                { id: 7, icon: '📝', title: '夸夸轰炸', desc: '面对面说出对方5个优点，不能重复、不能敷衍！' },
+                { id: 8, icon: '🎭', title: '灵魂互换', desc: '模仿对方习惯性小动作/口头禅，演足1分钟。' },
+                { id: 9, icon: '🎶', title: '情歌对唱', desc: '一起合唱《小酒窝》或《今天你要嫁给我》副歌部分。' },
+                { id: 10, icon: '📜', title: '藏头诗挑战', desc: '用"我、爱、你"三个字作句首，即兴写三行情书给对方。' },
+                { id: 11, icon: '💃', title: '身体字母', desc: '两人合作用身体摆出"L、O、V、E"四个字母并拍照留念。' },
+                { id: 12, icon: '🍰', title: '盲喂食物', desc: '一人闭眼，另一人选食物喂给对方猜，猜错换位继续。' },
+                { id: 13, icon: '❓', title: '默契大考', desc: '快速提问：第一次约会地点？对方最爱的零食？答错罚真心话。' },
+                { id: 14, icon: '🎙️', title: '给未来的语音', desc: '两人一起录一段话给明年的今天，保存到手机备忘录。' },
+                { id: 15, icon: '🧩', title: 'emoji猜猜乐', desc: '用5个emoji描述对方，让对方猜是什么意思。' },
+                { id: 16, icon: '🖊️', title: '手心画心', desc: '在对方手心画一颗爱心，保持到今晚洗澡前不许擦掉。' },
+                { id: 17, icon: '📣', title: '公开表白', desc: '在窗边/阳台大喊"520快乐！"（或发朋友圈视频）。' },
+                { id: 18, icon: '🧘', title: '双人挑战', desc: '合力完成一个双人瑜伽动作（如树式双人），坚持20秒。' },
+                { id: 19, icon: '😱', title: '表情包复刻', desc: '选对方最常用的表情包，一起拍三连拍还原它。' },
+                { id: 20, icon: '🎁', title: '终极惊喜', desc: '给对方一个今天之前从未做过的小惊喜（按摩5分钟、手写信等）。' },
+            ];
+
+            // 土味情话库
+            const loveQuotesList = [
+                '💬 "你属什么？""我属于你。"',
+                '💬 "我好像有点心动，是不是你往我心里撒跳跳糖了？"',
+                '💬 "你知道你和星星的区别吗？星星在天上，你在我心里。"',
+                '💬 "你有打火机吗？没有？那你是怎么点燃我的心的？"',
+                '💬 "我觉得你特别像一款游戏——我的世界。因为你在我心里建造了一切。"',
+                '💬 "你会弹吉他吗？不会？那你是怎么拨动我心弦的？"',
+                '💬 "你知道我为什么感冒了吗？因为我对你完全没有抵抗力。"',
+                '💬 "我想买一块地，你的死心塌地。"',
+                '💬 "你脸上有点东西——有点漂亮。"',
+                '💬 "最近总是头晕，因为一想到你，我的世界就天旋地转。"',
+                '💬 "你是哪里人？你是我的心上人。"',
+                '💬 "我觉得你好像一种水果——我的开心果。"',
+            ];
+
+            // ============ 游戏状态 ============
+            const state = {
+                playerA: { name: '先生', score: 0, freePass: true },
+                playerB: { name: '小姐', score: 0, freePass: true },
+                currentPlayer: null, // 'A' | 'B' | null
+                taskPool: [...allTasks],
+                history: [],
+                gameStarted: false,
+                victoryDeclared: false,
+            };
+
+            // ============ DOM引用 ============
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const domPlayerCardA = $('#playerCardA');
+            const domPlayerCardB = $('#playerCardB');
+            const domDrawBtn = $('#drawBtn');
+            const domCurrentIndicator = $('#currentIndicator');
+            const domRemainingBadge = $('#remainingBadge');
+            const domHistoryList = $('#historyList');
+            const domFirstBtnA = $('#firstBtnA');
+            const domFirstBtnB = $('#firstBtnB');
+            const domScoreRowA = $('#scoreRowA');
+            const domScoreRowB = $('#scoreRowB');
+            const domFreePassA = $('#freePassA');
+            const domFreePassB = $('#freePassB');
+            const domModalOverlay = $('#modalOverlay');
+            const domModalTaskNumber = $('#modalTaskNumber');
+            const domModalTaskEmoji = $('#modalTaskEmoji');
+            const domModalTaskTitle = $('#modalTaskTitle');
+            const domModalTaskDesc = $('#modalTaskDesc');
+            const domBtnUsePass = $('#btnUsePass');
+            const domVictoryOverlay = $('#victoryOverlay');
+            const domVictoryText = $('#victoryText');
+            const domQuoteText = $('#quoteText');
+            const domHeartsBg = $('#heartsBg');
+
+            let currentDrawnTask = null;
+
+            // ============ 初始化飘落心形 ============
+            function createFallingHearts() {
+                const heartEmojis = ['💕', '💖', '💗', '💘', '❤️', '🩷', '🌸', '✨', '💝', '🫧'];
+                const fragment = document.createDocumentFragment();
+                for (let i = 0; i < 35; i++) {
+                    const span = document.createElement('span');
+                    span.className = 'heart-particle';
+                    span.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                    span.style.left = Math.random() * 100 + '%';
+                    span.style.fontSize = (10 + Math.random() * 28) + 'px';
+                    span.style.animationDuration = (8 + Math.random() * 18) + 's';
+                    span.style.animationDelay = Math.random() * 16 + 's';
+                    span.style.opacity = (0.25 + Math.random() * 0.5);
+                    fragment.appendChild(span);
+                }
+                domHeartsBg.appendChild(fragment);
+            }
+
+            // ============ 渲染函数 ============
+            function updateScoreDisplay(playerKey) {
+                const row = playerKey === 'A' ? domScoreRowA : domScoreRowB;
+                const score = state[`player${playerKey}`].score;
+                const hearts = row.querySelectorAll('.score-heart');
+                hearts.forEach((h, i) => {
+                    if (i < score) {
+                        h.textContent = '❤️';
+                        h.classList.add('filled');
+                    } else {
+                        h.textContent = '🤍';
+                        h.classList.remove('filled');
+                    }
+                });
+            }
+
+            function updateFreePassDisplay(playerKey) {
+                const badge = playerKey === 'A' ? domFreePassA : domFreePassB;
+                const hasPass = state[`player${playerKey}`].freePass;
+                if (hasPass) {
+                    badge.textContent = '🃏 免罚卡可用';
+                    badge.classList.remove('used');
+                } else {
+                    badge.textContent = '🃏 已使用';
+                    badge.classList.add('used');
+                }
+            }
+
+            function updateCurrentIndicator() {
+                if (!state.currentPlayer) {
+                    domCurrentIndicator.textContent = '等待开始…';
+                    domDrawBtn.classList.add('disabled');
+                } else {
+                    const name = state.currentPlayer === 'A' ? state.playerA.name : state.playerB.name;
+                    const emoji = state.currentPlayer === 'A' ? '🌙' : '☀️';
+                    domCurrentIndicator.textContent = `${emoji} ${name} 的回合`;
+                    domDrawBtn.classList.remove('disabled');
+                }
+                domRemainingBadge.textContent = `剩余 ${state.taskPool.length} 个任务`;
+            }
+
+            function updatePlayerCardsHighlight() {
+                domPlayerCardA.classList.remove('active-player');
+                domPlayerCardB.classList.remove('active-player');
+                if (state.currentPlayer === 'A') domPlayerCardA.classList.add('active-player');
+                if (state.currentPlayer === 'B') domPlayerCardB.classList.add('active-player');
+            }
+
+            function updateHistoryList() {
+                domHistoryList.innerHTML = '';
+                if (state.history.length === 0) {
+                    domHistoryList.innerHTML =
+                        '<li style="text-align:center;color:#ccc;padding:20px;font-size:13px;">✨ 还没有抽取任务哦～<br>快来点击爱心抽取吧！</li>';
+                    return;
+                }
+                state.history.forEach((entry) => {
+                    const li = document.createElement('li');
+                    li.className = `history-item ${entry.result}`;
+                    const resultEmoji = entry.result === 'done' ? '✅' : entry.result === 'pass' ? '🃏' : '❌';
+                    const playerLabel = entry.player === 'A' ? '🌙 先生' : '☀️ 小姐';
+                    li.innerHTML = `
+                        <span class="task-icon">${entry.task.icon}</span>
+                        <div class="task-info">
+                            <div class="task-name">${entry.task.title}</div>
+                            <div class="task-player">${playerLabel} · ${resultEmoji}</div>
+                        </div>
+                        <span class="result-badge">${resultEmoji}</span>
+                    `;
+                    domHistoryList.appendChild(li);
+                });
+            }
+
+            function updateAllUI() {
+                updateScoreDisplay('A');
+                updateScoreDisplay('B');
+                updateFreePassDisplay('A');
+                updateFreePassDisplay('B');
+                updateCurrentIndicator();
+                updatePlayerCardsHighlight();
+                updateHistoryList();
+                // 隐藏/显示"我先来"按钮
+                domFirstBtnA.style.display = state.gameStarted ? 'none' : 'inline-block';
+                domFirstBtnB.style.display = state.gameStarted ? 'none' : 'inline-block';
+                if (state.gameStarted && state.currentPlayer) {
+                    domDrawBtn.classList.remove('disabled');
+                }
+                if (!state.gameStarted) {
+                    domDrawBtn.classList.add('disabled');
+                    domPlayerCardA.classList.remove('active-player');
+                    domPlayerCardB.classList.remove('active-player');
+                }
+            }
+
+            // ============ 核心逻辑 ============
+            function claimFirst(playerKey) {
+                if (state.gameStarted) return;
+                state.gameStarted = true;
+                state.currentPlayer = playerKey;
+                // 隐藏两个"我先来"按钮
+                domFirstBtnA.style.display = 'none';
+                domFirstBtnB.style.display = 'none';
+                updateAllUI();
+                const name = playerKey === 'A' ? state.playerA.name : state.playerB.name;
+                const emoji = playerKey === 'A' ? '🌙' : '☀️';
+                spawnBurstHearts(domDrawBtn);
+                showToast(`🎉 ${emoji} ${name} 获得先手！开始抽卡吧～`);
+            }
+
+            function drawTask() {
+                if (!state.gameStarted || !state.currentPlayer) {
+                    showToast('⚠️ 请先猜拳决定谁先开始哦～');
+                    return;
+                }
+                if (state.taskPool.length === 0) {
+                    showToast('🎊 所有任务都抽完啦！点击"重新开始"再来一轮吧～');
+                    return;
+                }
+                if (state.victoryDeclared) {
+                    showToast('🏆 已经有人达成5分啦！点击"重新开始"开启新游戏吧～');
+                    return;
+                }
+                // 随机抽取
+                const index = Math.floor(Math.random() * state.taskPool.length);
+                currentDrawnTask = state.taskPool[index];
+                // 从池中移除
+                state.taskPool.splice(index, 1);
+                // 显示弹窗
+                domModalTaskNumber.textContent = `任务 #${currentDrawnTask.id} / 20`;
+                domModalTaskEmoji.textContent = currentDrawnTask.icon;
+                domModalTaskTitle.textContent = currentDrawnTask.title;
+                domModalTaskDesc.textContent = currentDrawnTask.desc;
+                // 更新免罚卡按钮
+                const hasPass = state[`player${state.currentPlayer}`].freePass;
+                domBtnUsePass.disabled = !hasPass;
+                domBtnUsePass.style.opacity = hasPass ? '1' : '0.4';
+                domBtnUsePass.style.pointerEvents = hasPass ? 'auto' : 'none';
+                domModalOverlay.style.display = 'flex';
+                // 按钮粒子
+                spawnBurstHearts(domDrawBtn);
+            }
+
+            function resolveTask(result) {
+                domModalOverlay.style.display = 'none';
+                if (!currentDrawnTask || !state.currentPlayer) return;
+
+                const playerKey = state.currentPlayer;
+                const playerName = state[`player${playerKey}`].name;
+
+                if (result === 'done') {
+                    // 完成：加1分
+                    state[`player${playerKey}`].score = Math.min(5, state[`player${playerKey}`].score + 1);
+                    state.history.unshift({ task: currentDrawnTask, player: playerKey, result: 'done' });
+                    spawnBurstHearts(domPlayerCardA);
+                    spawnBurstHearts(domPlayerCardB);
+                    showToast(`✅ ${playerName} 完成任务！+1分 ❤️`);
+                    // 检查胜利
+                    if (state[`player${playerKey}`].score >= 5 && !state.victoryDeclared) {
+                        state.victoryDeclared = true;
+                        triggerVictory(playerKey);
+                    }
+                } else if (result === 'pass') {
+                    // 使用免罚卡
+                    state[`player${playerKey}`].freePass = false;
+                    state.history.unshift({ task: currentDrawnTask, player: playerKey, result: 'pass' });
+                    showToast(`🃏 ${playerName} 使用了免罚卡！真心话代替～`);
+                } else if (result === 'fail') {
+                    // 失败
+                    state.history.unshift({ task: currentDrawnTask, player: playerKey, result: 'fail' });
+                    const punishments = [
+                        '真心话：最近一次心跳加速是因为什么？',
+                        '真心话：你觉得对方什么时候最迷人？',
+                        '真心话：有没有什么小秘密一直没告诉对方？',
+                        '真心话：第一次见到对方时，第一印象是什么？',
+                        '真心话：如果有时光机，最想和对方回到哪个瞬间？',
+                    ];
+                    const randPunish = punishments[Math.floor(Math.random() * punishments.length)];
+                    showToast(`❌ 失败！惩罚：${randPunish} 或发5.20元红包～`);
+                }
+
+                currentDrawnTask = null;
+                // 切换玩家
+                if (state.taskPool.length > 0 && !state.victoryDeclared) {
+                    state.currentPlayer = state.currentPlayer === 'A' ? 'B' : 'A';
+                } else if (state.taskPool.length === 0 && !state.victoryDeclared) {
+                    state.currentPlayer = null;
+                    showToast('🎊 所有任务都抽完啦！来看看战绩吧～');
+                }
+                updateAllUI();
+                // 如果胜利后，保持当前玩家高亮
+                if (state.victoryDeclared) {
+                    updatePlayerCardsHighlight();
+                }
+            }
+
+            function triggerVictory(playerKey) {
+                const name = state[`player${playerKey}`].name;
+                const emoji = playerKey === 'A' ? '🌙' : '☀️';
+                domVictoryText.textContent = `🏆 ${emoji} ${name} 胜利！\n召唤对方实现520专属愿望～`;
+                domVictoryOverlay.style.display = 'flex';
+                // 大量心形爆发
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => spawnBurstHearts(document.body, 40), i * 150);
+                }
+                // 5秒后自动隐藏胜利横幅
+                setTimeout(() => {
+                    domVictoryOverlay.style.display = 'none';
+                }, 5000);
+            }
+
+            function resetGame() {
+                state.playerA.score = 0;
+                state.playerA.freePass = true;
+                state.playerB.score = 0;
+                state.playerB.freePass = true;
+                state.currentPlayer = null;
+                state.taskPool = [...allTasks];
+                state.history = [];
+                state.gameStarted = false;
+                state.victoryDeclared = false;
+                currentDrawnTask = null;
+                domModalOverlay.style.display = 'none';
+                domVictoryOverlay.style.display = 'none';
+                domFirstBtnA.style.display = 'inline-block';
+                domFirstBtnB.style.display = 'inline-block';
+                updateAllUI();
+                domCurrentIndicator.textContent = '等待开始…';
+                domDrawBtn.classList.add('disabled');
+                domPlayerCardA.classList.remove('active-player');
+                domPlayerCardB.classList.remove('active-player');
+                showToast('🔄 游戏已重置！猜拳决定先手，开始新的挑战吧～');
+            }
+
+            // ============ 粒子特效 ============
+            function spawnBurstHearts(sourceEl, count = 20) {
+                const rect = sourceEl.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const heartEmojis = ['💕', '💖', '💗', '💘', '❤️', '✨', '💝', '🩷'];
+                for (let i = 0; i < count; i++) {
+                    const span = document.createElement('span');
+                    span.className = 'burst-heart';
+                    span.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                    span.style.left = cx + 'px';
+                    span.style.top = cy + 'px';
+                    span.style.fontSize = (14 + Math.random() * 30) + 'px';
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 40 + Math.random() * 120;
+                    span.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                    span.style.setProperty('--dy', Math.sin(angle) * dist - 40 + 'px');
+                    span.style.animationDuration = (0.6 + Math.random() * 0.8) + 's';
+                    document.body.appendChild(span);
+                    setTimeout(() => span.remove(), 1000);
+                }
+            }
+
+            // ============ Toast提示 ============
+            function showToast(msg) {
+                let toast = document.querySelector('.custom-toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.className = 'custom-toast';
+                    toast.style.cssText = `
+                        position: fixed;
+                        bottom: 30px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: rgba(40,30,35,0.9);
+                        color: #fff;
+                        padding: 12px 22px;
+                        border-radius: 28px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        z-index: 3000;
+                        pointer-events: none;
+                        letter-spacing: 0.5px;
+                        white-space: nowrap;
+                        max-width: 90vw;
+                        text-align: center;
+                        animation: toast-up 2.6s ease-out forwards;
+                        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+                    `;
+                    document.body.appendChild(toast);
+                }
+                // 重置动画
+                toast.textContent = msg;
+                toast.style.animation = 'none';
+                toast.offsetHeight;
+                toast.style.animation = 'toast-up 2.6s ease-out forwards';
+                // 添加动画keyframes（如果不存在）
+                if (!document.getElementById('toast-style')) {
+                    const styleEl = document.createElement('style');
+                    styleEl.id = 'toast-style';
+                    styleEl.textContent = `
+                        @keyframes toast-up {
+                            0% { opacity: 0; transform: translateX(-50%) translateY(30px); }
+                            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                            75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                        }
+                    `;
+                    document.head.appendChild(styleEl);
+                }
+            }
+
+            // ============ 土味情话 ============
+            function randomQuote() {
+                const quote = loveQuotesList[Math.floor(Math.random() * loveQuotesList.length)];
+                domQuoteText.textContent = quote;
+                spawnBurstHearts($('#loveQuote'), 8);
+            }
+
+            // ============ 关闭弹窗（点击遮罩） ============
+            domModalOverlay.addEventListener('click', function(e) {
+                if (e.target === domModalOverlay) {
+                    // 不允许关闭，必须做选择
+                    showToast('😉 请做出选择哦～完成、失败或使用免罚卡～');
+                }
+            });
+
+            // ============ 键盘关闭胜利横幅 ============
+            domVictoryOverlay.addEventListener('click', function() {
+                domVictoryOverlay.style.display = 'none';
+            });
+
+            // ============ 初始化 ============
+            function init() {
+                createFallingHearts();
+                updateAllUI();
+                domFirstBtnA.style.display = 'inline-block';
+                domFirstBtnB.style.display = 'inline-block';
+                domDrawBtn.classList.add('disabled');
+                domCurrentIndicator.textContent = '等待开始…';
+                domRemainingBadge.textContent = '剩余 20 个任务';
+                domModalOverlay.style.display = 'none';
+                domVictoryOverlay.style.display = 'none';
+                // 初始随机土味情话
+                domQuoteText.textContent = loveQuotesList[Math.floor(Math.random() * loveQuotesList.length)];
+            }
+
+            // ============ 暴露到全局 ============
+            window.claimFirst = claimFirst;
+            window.drawTask = drawTask;
+            window.resolveTask = resolveTask;
+            window.resetGame = resetGame;
+            window.randomQuote = randomQuote;
+
+            init();
+            console.log('💘 520心动盲盒挑战 · 已就绪！');
+            console.log('👫 两人在现实中猜拳，赢的人点击自己卡片上的"我先来！"按钮');
+            console.log('🎁 然后轮流点击中央爱心抽取任务卡');
+            console.log('❤️ 先攒满5分的人获胜，可召唤对方实现520专属愿望');
+            console.log('🃏 每人有1次免罚卡机会，可用真心话代替任务');
+            console.log('💕 祝你们520快乐！');
+        })();
+    </script>
+</body>
+</html>
